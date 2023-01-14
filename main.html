@@ -1,0 +1,114 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+    <title>Title</title>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
+        integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+</head>
+
+<body>
+
+    <div class="container" style="display:flex; justify-content: space-around; padding: 1rem;">
+        <div class="row">
+            <div class="col-12">
+                <textarea name="origin" id="origin" cols="30" rows="10"></textarea>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-12">
+                <textarea name="new" id="new" cols="30" rows="10"></textarea>
+            </div>
+        </div>
+    </div>
+
+    <div style="text-align:center;">
+        <button id="change" type="button" class="btn btn-primary">바꾸기</button>
+    </div>
+
+    <script>
+        window.onload = () => {
+            readBinaryFile(url, token);
+            document.getElementById("change").onclick = function () {
+                var origin = document.getElementById("origin").value;
+                var result = [];
+
+                var lines = origin.split("\n");
+                lines.forEach(element => {
+                    // origin 텍스트에서 = 앞에 있는 문자열을 추출
+                    var key = element.split("=")[0].trim();
+                    // origin 텍스트에서 큰따옴표 안에 있는 문잦열 추출
+                    var reg2 = /(?<=").*(?=")/g;
+
+                    var newText = `<item name="${key}">${element.match(reg2)}</item>`;
+                    result.push(newText);
+                });
+
+                document.getElementById("new").value = result.join("\n");
+            }
+        }
+
+        function getFileType(header){
+            var type ="";
+            switch (header) {
+                case "89504e47":
+                    type = "image/png";
+                    break;
+                case "47494638":
+                    type = "image/gif";
+                    break;
+                case "ffd8ffe0":
+                case "ffd8ffe1":
+                case "ffd8ffe2":
+                case "ffd8ffe3":
+                case "ffd8ffe8":
+                    type = "image/jpeg";
+                    break;
+                default:
+                    type = "unknown"; // Or you can use the blob.type as fallback
+                    break;
+                }
+                return type;
+        }
+
+        let url = "http://localhost/file/admin/download";
+        let token = "eyJpZCI6IDIsICJ0aW1lIjogIjIwMjItMTItMDMgMTk6NTU6NDQifQ==";
+        // 온라인 바이너리 파일 읽기
+        function readBinaryFile(url, token) {
+            var xhr = new XMLHttpRequest();
+            url += `?token=${token}&file_id=43`;
+            xhr.open("GET", url, true);
+            xhr.responseType = "blob";
+            xhr.onload = function (e) {
+                if (this.status == 200) {
+                    var blob = this.response;
+                    console.log(blob);
+                }
+            };
+            xhr.send();
+        }
+
+        
+    </script>
+
+
+
+    <!-- Optional JavaScript -->
+    <!-- jQuery first, then Popper.js, then Bootstrap JS -->
+    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"
+        integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous">
+    </script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"
+        integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous">
+    </script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"
+        integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous">
+    </script>
+</body>
+
+</html>
